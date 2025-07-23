@@ -1,0 +1,6 @@
+name: Elements
+version: '1.0-SNAPSHOT'
+main: de.nikey.elements.Elements
+api-version: '1.21'
+authors: [ Nikey ]
+website: https://github.com/NikeyV1
