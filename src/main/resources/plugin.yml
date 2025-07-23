@@ -4,3 +4,6 @@ main: de.nikey.elements.Elements
 api-version: '1.21'
 authors: [ Nikey ]
 website: https://github.com/NikeyV1
+commands:
+  element:
+    description: Element Command
