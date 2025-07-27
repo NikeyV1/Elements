@@ -1,0 +1,9 @@
+core:
+  world: "world"
+  x: 200.0
+  y: 117.0
+  z: 200.0
+  maxHealth: 150
+juggernauts:
+  "a9043f97-6495-4c05-84de-803b2817497d": "FIRE"
+  "ed788315-f1f2-4da5-89db-19fc0d45f375": "EARTH"

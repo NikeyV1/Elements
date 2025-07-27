@@ -68,11 +68,12 @@ public class FireAbilities implements Listener {
             point.getWorld().spawnParticle(Particle.FLAME, point, 10, 0.3, 0.3, 0.3, 0.01);
             point.getWorld().playSound(point, Sound.BLOCK_FIRE_EXTINGUISH, 0.4f, 2f);
 
-            for (LivingEntity target : point.getWorld().getNearbyLivingEntities(point, 1.5, 1.5, 1.5)) {
+            for (LivingEntity target : point.getWorld().getNearbyLivingEntities(point, 1.8, 1.8, 1.8)) {
                 if (!target.equals(player)) {
                     target.setFireTicks(20*10);
-                    target.damage(18.0, player);
+                    target.damage(22.0, player);
                     hitEntities.add(target.getUniqueId());
+                    target.sendActionBar(Component.text("Your regeneration works less for 10 sek").color(NamedTextColor.GRAY));
                     if (target instanceof Player p) {
                         p.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20*10, 0));
                     }
@@ -153,7 +154,7 @@ public class FireAbilities implements Listener {
                     if (le instanceof Player target) {
                         target.setCooldown(Material.ENDER_PEARL,20*5);
                     }
-                    le.damage(20, player);
+                    le.damage(25, player);
                     le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20*10, 1));
                 }
             }

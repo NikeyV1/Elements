@@ -9,6 +9,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -71,11 +72,11 @@ public class WaterAbilities implements Listener {
                 world.spawnParticle(Particle.SPLASH, pos, 30, 0.5, 0.5, 0.5, 0.2);
                 world.playSound(pos, Sound.ENTITY_PLAYER_SPLASH, 0.8f, 0.8f);
 
-                for (LivingEntity le : world.getNearbyLivingEntities(pos, 2.8, 2.8, 2.8)) {
+                for (LivingEntity le : world.getNearbyLivingEntities(pos, 2.5, 2.5, 2.5)) {
                     if (!le.equals(player)) {
                         le.setVelocity(new Vector(0, 1.0, 0));
-                        le.damage(25,player);
-                        le.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 20*6, 0));
+                        le.damage(30,player);
+                        le.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 20*10, 0));
                     }
                 }
             }, 20L);
@@ -84,14 +85,14 @@ public class WaterAbilities implements Listener {
         player.sendMessage(Component.text("💧 Geysir ausbrechen ausgelöst!", NamedTextColor.AQUA));
     }
 
-    private static List<UUID> hitEntities = new ArrayList<>();
+    private static final List<UUID> hitEntities = new ArrayList<>();
 
     public static void flutkraft(Player player) {
         if (cooldown.containsKey(player.getUniqueId()))return;
-        cooldown.put(player.getUniqueId(), 22);
+        cooldown.put(player.getUniqueId(), 28);
 
         BossBar bar = BossBar.bossBar(
-                Component.text("💧 Cooldown: " + 22 + "s"),
+                Component.text("💧 Cooldown: " + 28 + "s"),
                 1.0f,
                 BossBar.Color.BLUE,
                 BossBar.Overlay.PROGRESS
@@ -114,7 +115,7 @@ public class WaterAbilities implements Listener {
                 BossBar bossBar = bossbars.get(player.getUniqueId());
                 if (bossBar != null) {
                     bossBar.name(Component.text("💧 Cooldown: " + cooldown.get(player.getUniqueId()) + "s"));
-                    bossBar.progress((float) cooldown.get(player.getUniqueId()) / 22);
+                    bossBar.progress((float) cooldown.get(player.getUniqueId()) / 28);
                 }
             }
         }.runTaskTimer(Elements.getPlugin(),0,20);
@@ -132,15 +133,17 @@ public class WaterAbilities implements Listener {
                 if (!le.equals(player)) {
                     Vector push = dir.clone().multiply(1.2).setY(0.2);
                     le.setVelocity(push);
-                    le.damage(16, player);
+                    le.damage(25, player);
                     hitEntities.add(le.getUniqueId());
+
+                    le.sendActionBar(Component.text("You are vulnerable for 10 sek").color(NamedTextColor.GRAY));
 
                     new BukkitRunnable() {
                         @Override
                         public void run() {
                             hitEntities.remove(le.getUniqueId());
                         }
-                    }.runTaskLater(Elements.getPlugin(),20*5);
+                    }.runTaskLater(Elements.getPlugin(),20*10);
                 }
             }
         }
@@ -149,7 +152,8 @@ public class WaterAbilities implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onInventoryOpen(InventoryOpenEvent event) {
-        if (hitEntities.contains(event.getPlayer().getUniqueId())) event.setCancelled(true);
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (hitEntities.contains(event.getEntity().getUniqueId())) event.setDamage(event.getDamage()*1.2);
     }
+
 }

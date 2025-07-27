@@ -1,8 +1,11 @@
 package de.nikey.elements.Commands;
 
 import de.nikey.elements.Abilities.EarthAbilities;
+import de.nikey.elements.Abilities.ElementType;
 import de.nikey.elements.Abilities.FireAbilities;
 import de.nikey.elements.Abilities.WaterAbilities;
+import de.nikey.elements.Elements;
+import de.nikey.elements.Managers.JuggernautManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
@@ -26,21 +29,36 @@ public class ElementCommand implements CommandExecutor {
         String element = args[0].toLowerCase();
         String abilityNumber = args[1];
 
+        JuggernautManager jm = Elements.getPlugin().getJuggernautManager();
+
         switch (element) {
             case "fire" -> {
-                if (abilityNumber.equals("1")) FireAbilities.loderndeWelle(player);
-                else if (abilityNumber.equals("2")) FireAbilities.infernoKuppel(player);
-                else sendInvalidAbility(player);
+                if (jm.isJuggernaut(player.getUniqueId()) && jm.getElement(player.getUniqueId()) == ElementType.FIRE) {
+                    if (abilityNumber.equals("1")) FireAbilities.loderndeWelle(player);
+                    else if (abilityNumber.equals("2")) FireAbilities.infernoKuppel(player);
+                    else sendInvalidAbility(player);
+                }
             }
             case "water" -> {
-                if (abilityNumber.equals("1")) WaterAbilities.geysirAusbruch(player);
-                else if (abilityNumber.equals("2")) WaterAbilities.flutkraft(player);
-                else sendInvalidAbility(player);
+                if (jm.isJuggernaut(player.getUniqueId()) && jm.getElement(player.getUniqueId()) == ElementType.WATER) {
+                    if (abilityNumber.equals("1")) WaterAbilities.geysirAusbruch(player);
+                    else if (abilityNumber.equals("2")) WaterAbilities.flutkraft(player);
+                    else sendInvalidAbility(player);
+                }
             }
             case "earth" -> {
-                if (abilityNumber.equals("1")) EarthAbilities.steinhagel(player);
-                else if (abilityNumber.equals("2")) EarthAbilities.wurzelkaefig(player);
-                else sendInvalidAbility(player);
+                if (jm.isJuggernaut(player.getUniqueId()) && jm.getElement(player.getUniqueId()) == ElementType.EARTH) {
+                    if (abilityNumber.equals("1")) EarthAbilities.steinhagel(player);
+                    else if (abilityNumber.equals("2")) EarthAbilities.wurzelkaefig(player);
+                    else sendInvalidAbility(player);
+                }
+            }
+
+            case "reload" -> {
+                if (player.isOp()) {
+                    Elements.getPlugin().reloadConfig();
+                    player.sendMessage(Component.text("Reloaded config!").color(NamedTextColor.GREEN));
+                }
             }
             default -> player.sendMessage(Component.text("Unbekanntes Element!", NamedTextColor.RED));
         }
