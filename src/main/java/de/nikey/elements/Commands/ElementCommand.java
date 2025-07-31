@@ -8,10 +8,15 @@ import de.nikey.elements.Elements;
 import de.nikey.elements.Managers.JuggernautManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class ElementCommand implements CommandExecutor {
     @Override
@@ -52,6 +57,18 @@ public class ElementCommand implements CommandExecutor {
                     else if (abilityNumber.equals("2")) EarthAbilities.wurzelkaefig(player);
                     else sendInvalidAbility(player);
                 }
+            }
+            case "setup" -> {
+                if (!player.isOp())return true;
+                List<Player> players = new ArrayList<>();
+                for (UUID uuid : Elements.getPlugin().getJuggernautManager().getAllJuggernauts().keySet()) {
+                    Player t = Bukkit.getPlayer(uuid);
+                    if (t == null)continue;
+                    players.add(t);
+                }
+
+                Elements.getPlugin().getJuggernautManager().setupJuggernautTeam(players);
+                player.sendMessage(Component.text("Setup complete"));
             }
 
             case "reload" -> {

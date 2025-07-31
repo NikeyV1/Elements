@@ -6,13 +6,20 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.*;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -57,7 +64,7 @@ public class CoreManager {
         currentHealth--;
         updateBossBar();
 
-        if (Math.random() < 0.2) {
+        if (Math.random() < 0.25) {
             damager.getWorld().playSound(damager.getLocation(),Sound.ENTITY_WITHER_HURT,0.8f,1);
         }
 
@@ -90,8 +97,43 @@ public class CoreManager {
         bossBar.progress(Math.max(0f, progress));
     }
 
+    public static ItemStack Live() {
+        ItemStack heart = new ItemStack(Material.HEART_OF_THE_SEA);
+        ItemMeta itemMeta = heart.getItemMeta();
+        itemMeta.customName(Component.text("H ", NamedTextColor.GOLD).decoration(TextDecoration.OBFUSCATED,true).decoration(TextDecoration.ITALIC,false)
+                .append(Component.text("Live", NamedTextColor.GOLD).decoration(TextDecoration.ITALIC,false).decoration(TextDecoration.OBFUSCATED,false))
+                .append(Component.text(" H", NamedTextColor.GOLD, TextDecoration.OBFUSCATED).decoration(TextDecoration.ITALIC,false)));
+        CustomModelDataComponent dataComponent = itemMeta.getCustomModelDataComponent();
+        dataComponent.setStrings(List.of("live"));
+        itemMeta.setCustomModelDataComponent(dataComponent);
+
+        itemMeta.getPersistentDataContainer().set(new NamespacedKey(Bukkit.getPluginManager().getPlugin("BuffSMP"),"BuffItem"), PersistentDataType.STRING,"Live");
+        heart.setItemMeta(itemMeta);
+        return heart;
+    }
+
     private void destroyCore(Player destroyer) {
         Bukkit.broadcast(Component.text(destroyer.getName() + " hat den Core zerstört!"));
+
+        Location baseLocation = structure.getCenter();
+
+        ItemStack[] lootItems = new ItemStack[] {
+                new ItemStack(Material.NETHERITE_INGOT, 2),
+                new ItemStack(Material.DIAMOND_BLOCK, 6),
+                new ItemStack(Material.ENCHANTED_GOLDEN_APPLE, 1),
+                Live(),
+                new ItemStack(Material.TRIDENT)
+        };
+
+        for (ItemStack item : lootItems) {
+            Item dropped = baseLocation.getWorld().dropItemNaturally(baseLocation, item);
+            dropped.setGlowing(true);
+            dropped.customName(Component.text("Event-Loot").color(NamedTextColor.DARK_AQUA));
+            dropped.setCustomNameVisible(true);
+        }
+
+
+
         removeCore();
     }
 
@@ -120,6 +162,9 @@ public class CoreManager {
                 continue;
             }
             double distSquared = player.getLocation().distanceSquared(baseLocation);
+
+            if (getCurrentHealth() == 0)continue;
+
             if (distSquared <= 120 * 120) {
                 bossBar.addViewer(player);
             } else {

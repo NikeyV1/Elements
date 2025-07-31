@@ -150,12 +150,12 @@ public class EarthAbilities implements Listener {
             double x = Math.cos(rad) * radius;
             double z = Math.sin(rad) * radius;
             Location rootPos = center.clone().add(x, 0, z);
-            world.spawnParticle(Particle.BLOCK_CRUMBLE, rootPos, 10, 0.2, 0.5, 0.2, Material.MANGROVE_ROOTS.createBlockData());
+            world.spawnParticle(Particle.BLOCK_CRUMBLE, rootPos, 5, 0.2, 0.5, 0.2, Material.MANGROVE_ROOTS.createBlockData());
         }
 
         world.playSound(center, Sound.BLOCK_ROOTED_DIRT_STEP, 1f, 0.8f);
 
-        for (LivingEntity le : world.getNearbyLivingEntities(center, radius, 3, radius)) {
+        for (LivingEntity le : world.getNearbyLivingEntities(center, radius, 4, radius)) {
             if (!le.equals(player)) {
                 le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20*8, 2));
                 le.setVelocity(new Vector(0, 0, 0));

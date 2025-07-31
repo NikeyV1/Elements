@@ -1,18 +1,25 @@
 package de.nikey.elements.Listener;
 
+import de.nikey.elements.Core.CoreManager;
 import de.nikey.elements.Elements;
 import de.nikey.elements.Managers.JuggernautStrengthManager;
+import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 public class JuggernautListener implements Listener {
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onJuggernautAttack(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player damager)) return;
         if (!Elements.getPlugin().getJuggernautManager().isJuggernaut(damager.getUniqueId())) return;
@@ -54,6 +61,4 @@ public class JuggernautListener implements Listener {
             event.getPlayer().getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(0.10000000149011612);
         }
     }
-
-
 }
